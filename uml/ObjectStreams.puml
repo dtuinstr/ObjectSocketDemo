@@ -1,0 +1,88 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam classAttributeIconSize 0
+hide empty members
+
+AutoCloseable <|.. InputStream
+AutoCloseable <|.. OutputStream
+InputStream <|-- ObjectInputStream
+ObjectInputStream o-- InputStream
+InputStream .. Spacer1
+Spacer1 .. ObjectInputStream
+hide Spacer1
+OutputStream <|-- ObjectOutputStream
+ObjectOutputStream o-- OutputStream
+OutputStream .. Spacer2
+Spacer2 .. ObjectOutputStream
+hide Spacer2
+InputStream --o Socket
+OutputStream --o Socket
+
+note "Objects to read/write must implement Serializable" as N0
+ObjectInputStream .. N0
+ObjectOutputStream .. N0
+
+N0 -[hidden]- Serializable
+
+class Socket {
+    + Socket(host:String, port:int)
+    + getInputStream() : InputStream
+    + getOutputStream() : OutputStream
+    + ...()
+}
+
+interface Serializable
+note bottom of Serializable
+    No methods or fields. This is
+    purely a tagging interface.
+end note
+
+interface AutoCloseable {
+    {abstract} close() : void
+}
+note left of AutoCloseable::close()
+    Called automatically when exiting a
+    try-with-resources block where the
+    object was declared in the resource
+    specification header
+end note
+
+abstract class InputStream {
+'    InputStream()
+'    ..
+    +close() : void
+    +{abstract} read() : int
+    +read(bytes:byte[]) : int
+    +read(bytes:byte[],offset:int,len:int) : int
+    +...()
+}
+
+class ObjectInputStream {
+    +ObjectInputStream(in:InputStream)
+    +close() : void
+    +read() : int
+    +readObject() : Object
+    +...()
+}
+
+abstract class OutputStream {
+    +close() : void
+    +flush() : void
+    +{abstract} write(b:int) : void
+    +write(b:byte[]) : void
+    +write(b:byte[], offset:int, len:int)
+    +...()
+}
+
+class ObjectOutputStream {
+    +ObjectOutputStream(out:OutputStream)
+    +close() : void
+    +flush() : void
+    +write(val:int) : void
+    +writeObject(obj:Object) : void)
+    +...()
+}
+
+
+
+@enduml
