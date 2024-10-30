@@ -1,3 +1,5 @@
+import org.w3c.dom.Text;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -54,42 +56,42 @@ public class Server
                     Socket clientSocket = serverSocket.accept();
 
                     // Build streams on the socket.
-//                        BufferedReader inReader =
-//                                new BufferedReader(
-//                                        new InputStreamReader(
-//                                                clientSocket.getInputStream()));
                     InputStream inStream = clientSocket.getInputStream();
+                    //BufferedInputStream inBuf = new BufferedInputStream(inStream);
                     ObjectInputStream inObj = new ObjectInputStream(inStream);
 
-//                        PrintWriter outWriter =
-//                                new PrintWriter(clientSocket.getOutputStream(),
-//                                        true)
                     OutputStream outStream = clientSocket.getOutputStream();
+                    //BufferedOutputStream outBuf = new BufferedOutputStream(outStream);
                     ObjectOutputStream outObj = new ObjectOutputStream(outStream)
             )
             {
                 // Connection made. Greet client.
-//                    outWriter.println(GREETING);
-                outObj.writeObject(GREETING);
-
-                // Converse with client.
-//                    String inString = inReader.readLine();
-                String inString = (String) inObj.readObject();
-                String reply = "Received: '" + inString + "'";
-
-                System.out.println(reply);  // server console, for DEBUG.
-                outObj.writeObject(reply);
+                outObj.writeObject(new TextMessage("server", GREETING));
                 outObj.flush();
 
-                while (!inString.isEmpty()) {
-                    inString = (String) inObj.readObject();
-                    reply = "Received: '" + inString + "'";
+                // Converse with client.
+                Message inMsg;
+                Message outMsg;
+                do {
+                    inMsg = (Message) inObj.readObject();
+                    System.out.println("inMsg.getClass() = " + inMsg.getClass());
 
-                    System.out.println(reply);  // server console, for DEBUG.
-                    outObj.writeObject(reply);
+                    // Process received message
+                    outMsg = switch (inMsg.getMsgType()) {
+                        case LISTUSERS -> new TextMessage("server", "LISTUSERS requested");
+                        case LOGOUT -> new TextMessage("server", "LOGOUT requested");
+                        case TEXT -> new TextMessage("server",
+                                "TEXT: " + ((TextMessage) inMsg).getText());
+                        default -> throw new IllegalStateException(
+                                "Unexpected value: " + inMsg.getMsgType());
+                    };
+
+                    System.out.println(outMsg);  // server console, for DEBUG.
+                    outObj.writeObject(outMsg);
                     outObj.flush();
-                }
-                outObj.writeObject(GOOD_BYE);
+                } while (outMsg.getMsgType() != MsgType.LOGOUT);
+
+                outObj.writeObject(new TextMessage("server", GOOD_BYE));
                 outObj.flush();
                 System.out.println("Client terminated connection.");
             }   // Streams and socket closed by try-with-resources.
