@@ -52,34 +52,57 @@ public class Client
 
                 // Build streams on top of socket.
                 OutputStream outStream = socket.getOutputStream();
+                //BufferedOutputStream outBuf = new BufferedOutputStream(outStream);
                 ObjectOutputStream outObj = new ObjectOutputStream(outStream);
-//                BufferedReader inReader =
-//                        new BufferedReader(
-//                                new InputStreamReader(socket.getInputStream()));
+
                 InputStream inStream = socket.getInputStream();
+                //BufferedInputStream inBuf = new BufferedInputStream(inStream);
                 ObjectInputStream inObj = new ObjectInputStream(inStream)
-//                PrintWriter outWriter =
-//                        new PrintWriter(socket.getOutputStream(), true)
         )
         {
-            String userStr;
-            String serverStr;
+            String userInput;
+            Message inMsg;
+            Message outMsg;
 
-            // Wait for server to speak first.
-            serverStr = (String) inObj.readObject();
-            System.out.println(serverStr);
-
-            // Our turn
+            // Take turns talking. Server goes first.
             do {
+                // Get server message and show it to user.
+                inMsg = (Message) inObj.readObject();
+                if (inMsg.getMsgType() == MsgType.TEXT) {
+                    inMsg = (TextMessage) inMsg;
+                    System.out.println(((TextMessage) inMsg).getText());
+                } else {
+                    System.out.println("UNRECOGNIZED RESPONSE: " + inMsg.toString());
+                }
+
+                // Get user input
                 System.out.print(prompt);
-                userStr = keyboard.nextLine();
+                userInput = keyboard.nextLine();
+                String[] inTokens = userInput.split("\\s");
 
-                outObj.writeObject(userStr);
+                // Construct Message based on user input.
+                if (inTokens[0].equalsIgnoreCase("LOGOUT")) {
+                    outMsg = new LogoutMessage("client");
+                } else if (inTokens[0].equalsIgnoreCase("LISTUSERS")) {
+                    outMsg = new ListUsersMessage("client");
+                } else {
+                    outMsg = new TextMessage("client", userInput);
+                }
+
+                // Send it to server.
+                outObj.writeObject(outMsg);
                 outObj.flush();
+            } while (outMsg.getMsgType() != MsgType.LOGOUT);
 
-                serverStr = (String) inObj.readObject();
-                System.out.println(serverStr);
-            } while (!userStr.isEmpty());
+            // Get server's closing reply and show it to user.
+            inMsg = (Message) inObj.readObject();
+            if (inMsg.getMsgType() == MsgType.TEXT) {
+                inMsg = (TextMessage) inMsg;
+                System.out.println(((TextMessage) inMsg).getText());
+            } else {
+                System.out.println("UNRECOGNIZED RESPONSE: " + inMsg.toString());
+            }
+
         }   // Streams and sockets closed by try-with-resources
 
         System.out.println("Connection to " + hostname + ":" + port
