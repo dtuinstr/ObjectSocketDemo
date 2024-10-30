@@ -5,16 +5,24 @@ hide empty members
 
 AutoCloseable <|.. InputStream
 AutoCloseable <|.. OutputStream
+
+InputStream <|-- BufferedInputStream
+InputStream --o BufferedInputStream
+
 InputStream <|-- ObjectInputStream
 ObjectInputStream o-- InputStream
 InputStream .. Spacer1
 Spacer1 .. ObjectInputStream
 hide Spacer1
+
 OutputStream <|-- ObjectOutputStream
 ObjectOutputStream o-- OutputStream
 OutputStream .. Spacer2
 Spacer2 .. ObjectOutputStream
 hide Spacer2
+OutputStream --o BufferedOutputStream
+OutputStream <|-- BufferedOutputStream
+
 InputStream --o Socket
 OutputStream --o Socket
 
@@ -57,6 +65,11 @@ abstract class InputStream {
     +...()
 }
 
+class BufferedInputStream {
+    + BufferedInputStream(in:InputStream)
+    + ...()
+}
+
 class ObjectInputStream {
     +ObjectInputStream(in:InputStream)
     +close() : void
@@ -72,6 +85,11 @@ abstract class OutputStream {
     +write(b:byte[]) : void
     +write(b:byte[], offset:int, len:int)
     +...()
+}
+
+class BufferedOutputStream {
+    + BufferedOutputStream(out:OutputStream)
+    + ...()
 }
 
 class ObjectOutputStream {
