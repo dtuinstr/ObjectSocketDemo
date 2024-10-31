@@ -6,8 +6,8 @@ hide empty members
 AutoCloseable <|.. InputStream
 AutoCloseable <|.. OutputStream
 
-InputStream <|-- BufferedInputStream
-InputStream --o BufferedInputStream
+'InputStream <|-- BufferedInputStream
+'InputStream --o BufferedInputStream
 
 InputStream <|-- ObjectInputStream
 ObjectInputStream o-- InputStream
@@ -20,8 +20,8 @@ ObjectOutputStream o-- OutputStream
 OutputStream .. Spacer2
 Spacer2 .. ObjectOutputStream
 hide Spacer2
-OutputStream --o BufferedOutputStream
-OutputStream <|-- BufferedOutputStream
+'OutputStream --o BufferedOutputStream
+'OutputStream <|-- BufferedOutputStream
 
 InputStream --o Socket
 OutputStream --o Socket
@@ -65,10 +65,10 @@ abstract class InputStream {
     +...()
 }
 
-class BufferedInputStream {
-    + BufferedInputStream(in:InputStream)
-    + ...()
-}
+'class BufferedInputStream {
+'    + BufferedInputStream(in:InputStream)
+'    + ...()
+'}
 
 class ObjectInputStream {
     +ObjectInputStream(in:InputStream)
@@ -87,10 +87,10 @@ abstract class OutputStream {
     +...()
 }
 
-class BufferedOutputStream {
-    + BufferedOutputStream(out:OutputStream)
-    + ...()
-}
+'class BufferedOutputStream {
+'    + BufferedOutputStream(out:OutputStream)
+'    + ...()
+'}
 
 class ObjectOutputStream {
     +ObjectOutputStream(out:OutputStream)
