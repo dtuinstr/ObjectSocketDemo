@@ -1,7 +1,7 @@
 public class TextMessage
         extends Message
 {
-    private String text;
+    private final String text;
 
     public TextMessage(String username, String text)
     {

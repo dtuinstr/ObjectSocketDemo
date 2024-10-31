@@ -1,5 +1,3 @@
-import org.w3c.dom.Text;
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -82,8 +80,6 @@ public class Server
                         case LOGOUT -> new TextMessage("server", "LOGOUT requested");
                         case TEXT -> new TextMessage("server",
                                 "TEXT: " + ((TextMessage) inMsg).getText());
-                        default -> throw new IllegalStateException(
-                                "Unexpected value: " + inMsg.getMsgType());
                     };
 
                     System.out.println(outMsg);  // server console, for DEBUG.

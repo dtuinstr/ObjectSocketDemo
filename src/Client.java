@@ -69,10 +69,9 @@ public class Client
                 // Get server message and show it to user.
                 inMsg = (Message) inObj.readObject();
                 if (inMsg.getMsgType() == MsgType.TEXT) {
-                    inMsg = (TextMessage) inMsg;
                     System.out.println(((TextMessage) inMsg).getText());
                 } else {
-                    System.out.println("UNRECOGNIZED RESPONSE: " + inMsg.toString());
+                    System.out.println("UNRECOGNIZED RESPONSE: " + inMsg);
                 }
 
                 // Get user input
@@ -97,10 +96,9 @@ public class Client
             // Get server's closing reply and show it to user.
             inMsg = (Message) inObj.readObject();
             if (inMsg.getMsgType() == MsgType.TEXT) {
-                inMsg = (TextMessage) inMsg;
                 System.out.println(((TextMessage) inMsg).getText());
             } else {
-                System.out.println("UNRECOGNIZED RESPONSE: " + inMsg.toString());
+                System.out.println("UNRECOGNIZED RESPONSE: " + inMsg);
             }
 
         }   // Streams and sockets closed by try-with-resources

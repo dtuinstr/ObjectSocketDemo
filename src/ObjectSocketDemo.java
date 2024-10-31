@@ -20,8 +20,6 @@ public class ObjectSocketDemo
 
     public static void main(String[] args)
     {
-//        System.out.println("Command-line arguments: "
-//                + Arrays.toString(args));
 
         if (args.length < 2) {
             System.err.println(USAGE);
